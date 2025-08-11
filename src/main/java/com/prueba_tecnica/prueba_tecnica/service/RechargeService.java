@@ -9,4 +9,5 @@ public interface RechargeService {
     Token getAuthToken();
     List <Supplier> getAllSuppliers();
     TransactionResult processRecharge(Recharge recharge);
+    List<TransactionResult> getTransactionHistory();
 }

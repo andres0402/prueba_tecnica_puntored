@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpStatusCodeException;
 import org.springframework.web.client.RestTemplate;
 
+import com.prueba_tecnica.prueba_tecnica.data.TransactionsRepository;
 import com.prueba_tecnica.prueba_tecnica.model.*;
 
 
@@ -22,6 +23,9 @@ public class RechargeServiceImpl implements RechargeService {
 
     @Autowired
     private RestTemplate restTemplate;
+
+    @Autowired
+    private TransactionsRepository transactionsRepository;
 
     @Value("${puntored.api.url}auth")
     private String authApiUrl;
@@ -121,14 +125,24 @@ public class RechargeServiceImpl implements RechargeService {
             );
 
             if (response.getStatusCode() == HttpStatus.OK) {
+                transactionsRepository.save(response.getBody());
                 return response.getBody();
             } else {
                 return null;
             }
         } catch (HttpStatusCodeException ex) {
-            return new TransactionResult(ex.getResponseBodyAsString(), "", "", "");
+            return new TransactionResult("", ex.getResponseBodyAsString(), "", "");
         } catch (Exception ex) {
-            return new TransactionResult(ex.getMessage(), "", "", "");
+            return new TransactionResult("", ex.getMessage(), "", "");
         }
+    }
+
+    @Override
+    public List<TransactionResult> getTransactionHistory() {
+        List<TransactionResult> transactions = transactionsRepository.findAll();
+        if (transactions == null || transactions.isEmpty()) {
+            return List.of();
+        }
+        return transactions;
     }
 }
