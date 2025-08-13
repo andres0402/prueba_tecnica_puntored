@@ -33,6 +33,7 @@ class TransactionsControllerTest {
     @MockBean
     private RechargeService rechargeService;
 
+    // Test para obtener el token de autenticación
     @Test
     @DisplayName("GET /getAuthToken - OK")
     void getAuthToken_ok() throws Exception {
